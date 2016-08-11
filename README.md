@@ -10,3 +10,5 @@ fs<br>
 dronestream <br>
 http <br>
 socket.io <br>
+
+Then navigate to the public folder, open a command window and type 'node server.js' to star the server
