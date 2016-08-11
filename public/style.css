@@ -1,0 +1,86 @@
+h1 {
+	font-family: segoe ui light;
+}
+button {
+	background-color: #4CAF50;
+	color: white;
+	border:0px;
+	font-family: Arial;
+	border-radius: 2px;
+}
+body {
+background-color: white;
+}
+.drone-control {
+width: 7em;
+height: 7em;
+}
+.drone-control-group {
+display: inline-block;
+width: 20em;
+height: 5em;
+text-align: left;
+}
+.drone-control-group-2 {
+	display: inline-block;
+	width: 20em;
+	height: 5em;
+	text-align: center;
+}
+.drone-readings {
+	text-align: right;
+	margin-top: 5px;
+}
+.drone-stream {
+	text-align: center;
+}
+
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #333;
+}
+
+li {
+    float: left;
+}
+
+li a, .dropbtn {
+    display: inline-block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+li a:hover, .dropdown:hover .dropbtn {
+    background-color: red;
+}
+
+li.dropdown {
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+}
+
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    text-align: left;
+}
+
+.dropdown-content a:hover {background-color: #f1f1f1}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}

@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="icon" 
+      type="image/png" 
+      href="favicon.ico">
+	<title>Drone controller</title>
+	<link rel = "stylesheet" type = "text/css" href = "style.css"></link>
+	<script type="text/javascript" src="/socket.io/socket.io.js"></script>
+
+	<script>
+	var socket = io();
+	function DroneInstruction(droneInstruction) {
+	this.instruction = droneInstruction
+	}
+	function sendInstruction(droneInstruction) {
+	var instructionPackage = JSON.stringify(droneInstruction);
+	socket.emit('drone-instruction', instructionPackage);
+	}
+	socket.on('drone-info', function(droneInfoPackage) {
+		var navdata = JSON.parse(droneInfoPackage);
+		document.getElementById(droneInfo_battery).innerHTML = navdata.batteryPercentage;
+		document.getElementById(droneInfo_altitude).innerHTML = navdata.altitude;
+		document.getElementById(droneInfo_yaw).innerHTML = navdata.rotation.yaw;
+		document.getElementById(droneInfo_roll).innerHTML = navdata.rotation.roll;
+		document.getElementById(droneInfo_pitch).innerHTML = navdata.rotation.pitch;
+		document.getElementById(droneInfo_x).innerHTML = navdata.velocity.x;
+		document.getElementById(droneInfo_y).innerHTML = navdata.velocity.y;
+		document.getElementById(droneInfo_z).innerHTML = navdata.velocity.z;
+	});
+	</script>
+
+	<script type="text/javascript" src="jquery.js"></script>
+	<script>
+	var allowed = true;
+	$(document).keydown(function(event){
+		if(event.repeat != undefined) {
+			allowed = !event.repeat;
+		}
+		if(!allowed) return;
+		allowed = false;
+		switch(event.keyCode) {
+			case 87: //w
+			sendInstruction(new DroneInstruction('UP'));
+			break;
+			
+			case 83:
+			sendInstruction(new DroneInstruction('DOWN'));
+			break;
+
+			case 65:
+			sendInstruction(new DroneInstruction('ROTATE_LEFT'));
+			break;
+
+			case 68:
+			sendInstruction(new DroneInstruction('ROTATE_RIGHT'));
+			break;
+
+			case 32:
+			sendInstruction(new DroneInstruction('LAUNCH'));
+			break;
+
+			case 81:
+			sendInstruction(new DroneInstruction('LAND'));
+			break;
+
+			case 82:
+			sendInstruction(new DroneInstruction('RESET'));
+			break;
+
+			case 72:
+			sendInstruction(new DroneInstruction('HOVER'));
+			break;
+
+			case 73:
+			sendInstruction(new DroneInstruction('FORWARDS'));
+			break;
+
+			case 75:
+			sendInstruction(new DroneInstruction('BACKWARDS'));
+			break;
+
+			case 76:
+			sendInstruction(new DroneInstruction('RIGHT'));
+			break;
+
+			case 74:
+			sendInstruction(new DroneInstruction('LEFT'));
+			break;
+
+			case 70:
+			sendInstruction(new DroneInstruction('FRONTFLIP'));
+			break;
+
+			case 66:
+			sendInstruction(new DroneInstruction('BACKFLIP'));
+			break;
+
+			case 49:
+			sendInstruction(new DroneInstruction('ANIMATE_SQUARE'));
+			break;
+
+			case 50:
+			sendInstruction(new DroneInstruction('ANIMATE_TRIANGLE'));
+			break;
+
+			case 51:
+			sendInstruction(new DroneInstruction('LED_BLINK_RED_AND_GREEN'));
+
+			case 67:
+			sendInstruction(new DroneInstruction('BARREL_ROLL_LEFT'));
+			break;
+
+			case 86:
+			sendInstruction(new DroneInstruction('BARREL_ROLL_RIGHT'));
+			break;
+
+			case 87:
+			sendInstruction(new DroneInstruction('WAVE'));
+		}
+		console.log(event.keyCode);
+	});
+	$(document).keyup(function(e){
+		allowed = true;
+		console.log("Stopped");
+	});
+	$(document).focus(function(e){
+		allowed = true;
+	});
+		
+	</script>
+</head>
+<body>
+</head>
+<body>
+<ul>
+  <li><a class="active" onclick = "sendInstruction(new DroneInstruction('LAUNCH'))">LAUNCH (SPACE)</a></li>
+  <li><a class="active" onclick = "sendInstruction(new DroneInstruction('LAND'))">LAND (Q)</a></li>
+  <li><a class="active" onclick = "sendInstruction(new DroneInstruction('HOVER'))">HOVER (H)</a></li>
+  <li><a class="active" onclick = "sendInstruction(new DroneInstruction('RESET'))">RESET (R)</a></li>
+  <li class="dropdown">
+    <a href="#" class="dropbtn">ANIMATIONS</a>
+    <div class="dropdown-content">
+      <a onclick = "sendInstruction(new DroneInstruction('ANIMATE_SQUARE'))">SQUARE (1)</a>
+      <a onclick = "sendInstruction(new DroneInstruction('TRIANGLE'))">TRIANGLE (2)</a>
+      <a onclick = "sendInstruction(new DroneInstruction('LED_BLINK_RED_AND_GREEN'))">LED BLINK (3)</a>
+      <a onclick = "sendInstruction(new DroneInstruction('WAVE'))">wave (4)</a>
+    </div>
+  </li>
+  <li class="dropdown">
+    <a href="#" class="dropbtn">OTHER</a>
+    <div class="dropdown-content">
+      <a onclick = "sendInstruction(new DroneInstruction('FRONTFLIP'))">FRONTFLIP (F)</a>
+      <a onclick = "sendInstruction(new DroneInstruction('BACKFLIP'))">BACKFLIP (B)</a>
+      <a onclick = "sendInstruction(new DroneInstruction('BACKFLIP'))">BARREL ROLL LEFT (C)</a>
+      <a onclick = "sendInstruction(new DroneInstruction('BACKFLIP'))">BARREL ROLL RIGHT (V)</a>
+    </div>
+  </li>
+</ul>
+	<br>
+	<div class="drone-stream" id="droneStream">
+<script src="/dronestream/nodecopter-client.js"></script>
+<script>
+	new NodecopterStream(document.getElementById('droneStream'));
+</script>
+</div>
+<h1>Movement controls</h1>
+<br>
+<br>
+<div class = "drone-control-group">
+
+&emsp; &emsp; &emsp; &emsp; &emsp;  <button type = "button" class = "drone-control" onclick = "sendInstruction(new DroneInstruction('UP'))" >UP (W)</button> <br>
+
+&nbsp;<button type = "button" class = "drone-control" onclick = "sendInstruction(new DroneInstruction('ROTATE_LEFT'))" >ROTATE LEFT (A)</button> &emsp; &emsp; &emsp; &nbsp; &nbsp; &nbsp; &nbsp;
+<button type = "button" class = "drone-control" onclick = "sendInstruction(new DroneInstruction('ROTATE_RIGHT'))" >ROTATE RIGHT (D)</button> <br>
+&emsp; &emsp; &emsp; &emsp;&emsp; &nbsp;<button type = "button" class = "drone-control" onclick = "sendInstruction(new DroneInstruction('DOWN'))" > DOWN (S)</button>
+</div>
+
+<div class = "drone-control-group-2">
+<button type = "button" onclick = "sendInstruction(new DroneInstruction('FORWARDS'))" class = "drone-control">FORWARDS (I)</button> <br>
+<button type = "button" onclick = "sendInstruction(new DroneInstruction('LEFT'))" class = "drone-control">MOVE LEFT (J)</button> &emsp; &emsp; &emsp; &emsp; &nbsp;
+<button type = "button" onclick = "sendInstruction(new DroneInstruction('RIGHT'))" class = "drone-control">MOVE RIGHT (L)</button> <br>
+<button type = "button" onclick = "sendInstruction(new DroneInstruction('BACKWARDS'))" class = "drone-control">BACKWARDS (K)</button>
+</div>
+<div class = "drone-readings">
+<div class="drone-readings1">Battery: <span id="droneInfo_battery">(Drone not connected)</span>%</div>
+<div>Altitude: <span id="droneInfo_altidude">(Drone not connected)</span>m</div>
+<div>yaw: <span id="droneInfo_yaw">(Drone not connected)</span>°</div>
+<div>roll: <span id="droneInfo_roll">(Drone not connected)</span>°</div>
+<div>pitch: <span id="droneInfo_pitch">(Drone not connected)</span>°</div>
+<div>x: <span id="droneInfo_x">(Drone not connected)</span>m/s</div>
+<div>y: <span id="droneInfo_y">(Drone not connected)</span>m/s</div>
+<div>z: <span id="droneInfo_z">(Drone not connected)</span>m/s</div>
+</div>
+</body>
+</html>
