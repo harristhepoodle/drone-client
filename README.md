@@ -15,4 +15,4 @@ Then navigate to the public folder, open a command window and type 'node server.
 
 # Controlling the drone
 There are two ways you can control the drone, the first way is to control the drone using the buttons on screen, as well as the menu at the top for extra movements like flips or dance moves.<br>
-The other option is to use the keypad. w = go up, s = go down a = rotate left (anticlockwise), d = rotate right (clockwise), i,k,j,l = forwards, backwards, left, right. Other buttons are labelled at the nav bar.
+The other option is to use the keypad. w = go up, s = go down a = rotate left (anticlockwise), d = rotate right (clockwise), i,k,j,l = forwards, backwards, left, right. Other buttons are labelled at the nav bar. All visual controls, which are on the screen, or in a sub menu in the nav bar are labbeled with their appropriate characters.
