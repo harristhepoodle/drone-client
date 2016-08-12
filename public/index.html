@@ -19,14 +19,14 @@
 	}
 	socket.on('drone-info', function(droneInfoPackage) {
 		var navdata = JSON.parse(droneInfoPackage);
-		document.getElementById(droneInfo_battery).innerHTML = navdata.batteryPercentage;
-		document.getElementById(droneInfo_altitude).innerHTML = navdata.altitude;
-		document.getElementById(droneInfo_yaw).innerHTML = navdata.rotation.yaw;
-		document.getElementById(droneInfo_roll).innerHTML = navdata.rotation.roll;
-		document.getElementById(droneInfo_pitch).innerHTML = navdata.rotation.pitch;
-		document.getElementById(droneInfo_x).innerHTML = navdata.velocity.x;
-		document.getElementById(droneInfo_y).innerHTML = navdata.velocity.y;
-		document.getElementById(droneInfo_z).innerHTML = navdata.velocity.z;
+		document.getElementById("droneInfo_battery").innerHTML = navdata.batteryPercentage;
+		document.getElementById("droneInfo_altitude").innerHTML = navdata.altitude;
+		document.getElementById("droneInfo_yaw").innerHTML = navdata.rotation.yaw;
+		document.getElementById("droneInfo_roll").innerHTML = navdata.rotation.roll;
+		document.getElementById("droneInfo_pitch").innerHTML = navdata.rotation.pitch;
+		document.getElementById("droneInfo_x").innerHTML = navdata.velocity.x;
+		document.getElementById("droneInfo_y").innerHTML = navdata.velocity.y;
+		document.getElementById("droneInfo_z").innerHTML = navdata.velocity.z;
 	});
 	</script>
 
@@ -123,6 +123,7 @@
 	$(document).keyup(function(e){
 		allowed = true;
 		console.log("Stopped");
+		//sendInstruction(new DroneInstruction('HOVER'));
 	});
 	$(document).focus(function(e){
 		allowed = true;
@@ -184,7 +185,7 @@
 </div>
 <div class = "drone-readings">
 <div class="drone-readings1">Battery: <span id="droneInfo_battery">(Drone not connected)</span>%</div>
-<div>Altitude: <span id="droneInfo_altidude">(Drone not connected)</span>m</div>
+<div>Altitude: <span id="droneInfo_altitude">(Drone not connected)</span>m</div>
 <div>yaw: <span id="droneInfo_yaw">(Drone not connected)</span>°</div>
 <div>roll: <span id="droneInfo_roll">(Drone not connected)</span>°</div>
 <div>pitch: <span id="droneInfo_pitch">(Drone not connected)</span>°</div>
