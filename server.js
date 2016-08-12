@@ -100,7 +100,7 @@ io.on('connect', function(socket) {
 	socket.on('drone-instruction', function(instructionPackage) {
 		console.log("Someone issued the instruction: " + instructionPackage);
 		var droneInstruction = JSON.parse(instructionPackage);
-		
+		instructionStack.push(droneInstruction);
 	});
 });
 droneClient.on('navdata', function(navdata) {
@@ -110,16 +110,16 @@ droneClient.on('navdata', function(navdata) {
 			batteryPercentage: navdata.demo.batteryPercentage,
 			altitude: navdata.demo.altitude,
 			rotation: {
-				pitch: navdata.demo.pitch,
-				yaw: navdata.demo.yaw,
-				roll: navdata.demo.roll
+				pitch: navdata.demo.rotation.pitch,
+				yaw: navdata.demo.rotation.yaw,
+				roll: navdata.demo.rotation.roll
 			},
 			velocity: {
 				x: navdata.demo.velocity.x,
 				y: navdata.demo.velocity.y,
-				z:  navdata.demo.velocity.z
-			},
-			flystate: navdata.demo.flystate,
+				z: navdata.demo.velocity.z
+			}//,
+			//flystate: navdata.demo.flystate,
 		};
 		openConnections.forEach(function(element) {
 			element.socket.emit('drone-info', JSON.stringify(data));
@@ -127,6 +127,17 @@ droneClient.on('navdata', function(navdata) {
 		lastReading = data;
 	}
 });
+
+var setPoint = {
+	translation: {
+		x: 0,
+		y: 0,
+		z: 0
+	}
+};
+var errorControllerConstant = {
+	p: 0.1
+};
 
 var timeMiliPerIteration = (1 / droneControlIterationsPerSecond) * 1000;
 
@@ -138,33 +149,27 @@ function droneControl() {
 			//manual controls
 
 			case 'FORWARDS':
-			droneClient.back(0);
-			droneClient.front(0.5);
+			setPoint.translation.x += 0.5;
 			break;
 
 			case 'BACKWARDS':
-			droneClient.front(0);		
-			droneClient.back(0.5);
+			setPoint.translation.x -= 0.5;
 			break;
 
 			case 'RIGHT':
-			droneClient.left(0);
-			droneClient.right(0.5);
+			setPoint.translation.y += 0.5;
 			break;
 
 			case 'LEFT':
-			droneClient.right(0);
-			droneClient.left(0.5);
+			setPoint.translation.y -= 0.5;
 			break;
 
 			case 'UP':
-			droneClient.down(0);
-			droneClient.up(0.5);
+			setPoint.translation.z += 0.5;
 			break;
 
 			case 'DOWN':
-			droneClient.up(0);
-			droneClient.down(0.5);
+			setPoint.translation.z -= 0.5;
 			break;
 
 			case 'ROTATE_RIGHT':
@@ -176,6 +181,8 @@ function droneControl() {
 			droneClient.clockwise(0);
 			droneClient.counterClockwise(0.5);
 			break;
+
+
 			//automated controls
 
 			
@@ -185,13 +192,14 @@ function droneControl() {
 			break;
 
 			case 'LAUNCH':
-			console.log('taking off');
 			droneClient.takeoff();
-			//droneClient.stop();
+			//console.log("go");
+			setPoint.translation.z = 2;
 			break;
 
 			case 'LAND':
 			droneClient.stop();
+			setPoint.translation.z = 0;
 			droneClient.land();
 			break;
 
@@ -245,6 +253,12 @@ function droneControl() {
 			}).after(2000, function() {
 				this.land();
 			});
+
+			/*case 'ANIMATE_DANCE':
+			droneClient.takeoff();
+			droneClient.after(5000, function(){
+				this.
+			})*/
 			case 'LED_BLINK_RED_AND_GREEN':
 			droneClient.animateLeds('blinkGreenRed', 5, 10);
 			break;
@@ -266,7 +280,32 @@ function droneControl() {
 			break;
 		}
 	}
-	if(lastReading.altitude > 1)
-		droneClient.up(0);
+
+	if(typeof lastReading !== 'undefined'){
+		position.z = lastReading.altitude;
+		position.x += lastReading.velocity.x * timeMiliPerIteration/100;
+		position.y += lastReading.velocity.y * timeMiliPerIteration/1000;
+		var error = {
+			x: setPoint.translation.x - position.x,
+			y: setPoint.translation.y - position.y,
+			z: setPoint.translation.z - position.z
+
+		}
+		var pControl =  {
+			z: error.z * errorControllerConstant.p,
+			y: error.y * errorControllerConstant.p,
+			x: error.z * errorControllerConstant.p
+		};
+
+		if(pControl.z >= 0 ) {
+			console.log("velocity is " + lastReading.velocity.y);
+			console.log(error.z);
+			droneClient.down(0);
+			droneClient.up(pControl.z);
+		} else {
+			droneClient.up(0);
+			droneClient.down(pControl.z);
+		}
+	}
 };
 setInterval(droneControl, timeMiliPerIteration);
