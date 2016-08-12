@@ -283,7 +283,7 @@ function droneControl() {
 
 	if(typeof lastReading !== 'undefined'){
 		position.z = lastReading.altitude;
-		position.x += lastReading.velocity.x * timeMiliPerIteration/100;
+		position.x += lastReading.velocity.x * timeMiliPerIteration/1000;
 		position.y += lastReading.velocity.y * timeMiliPerIteration/1000;
 		var error = {
 			x: setPoint.translation.x - position.x,
@@ -294,18 +294,35 @@ function droneControl() {
 		var pControl =  {
 			z: error.z * errorControllerConstant.p,
 			y: error.y * errorControllerConstant.p,
-			x: error.z * errorControllerConstant.p
+			x: error.x * errorControllerConstant.p
 		};
 
 		if(pControl.z >= 0 ) {
-			console.log("velocity is " + lastReading.velocity.y);
-			console.log(error.z);
+			//console.log("velocity is " + lastReading.velocity.y);
+			//console.log(error.z);
 			droneClient.down(0);
 			droneClient.up(pControl.z);
 		} else {
 			droneClient.up(0);
 			droneClient.down(pControl.z);
+		} 
+		if(pControl.x >= 0) {
+			droneClient.back(0);
+			droneClient.forward(pControl.x);
+		} else {
+			droneClient.forward(0);
+			droneClient.back(-pControl.x);
 		}
+		if(pControl.y >= 0) {
+			droneClient.left(0);
+			droneClient.right(pControl.y);
+		} else {
+			droneClient.right(0);
+			droneClient.left(-pControl.y);
+		}
+
+
+
 	}
 };
 setInterval(droneControl, timeMiliPerIteration);
