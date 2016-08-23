@@ -19,4 +19,6 @@ The other option is to use the keypad. w = go up, s = go down a = rotate left (a
 <br>
 <img src="https://github.com/harristhepoodle/drone-client/blob/master/Untitled.png"></img>
 <br>
-The grey/black rectangle is where the drone video stream will be. The readings in the bottom left corner will be replaced with the actual readings when you have connected to the drones wifi and started the server
+The grey/black rectangle is where the drone video stream will be. The readings in the bottom left corner will be replaced with the actual readings when you have connected to the drones wifi and started the server.
+<br>
+<strong>Original client created by harristhepoodle</strong>
